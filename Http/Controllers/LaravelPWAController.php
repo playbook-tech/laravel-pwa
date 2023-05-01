@@ -2,16 +2,17 @@
 
 namespace LaravelPWA\Http\Controllers;
 
-use Exception;
 use Illuminate\Routing\Controller;
-use LaravelPWA\Services\LaucherIconService;
+use Illuminate\Http\Request;
 use LaravelPWA\Services\ManifestService;
 
 class LaravelPWAController extends Controller
 {
-    public function manifestJson()
+    public function manifestJson(Request $request)
     {
-        $output = (new ManifestService)->generate();
+        $product = strpos($request->url(), 'firstdown') ? 'firstdown' : 'fastbreak';
+
+        $output = (new ManifestService)->generate($product);
         return response()->json($output);
     }
 

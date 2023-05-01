@@ -11,12 +11,17 @@ namespace LaravelPWA\Services;
 
 class ManifestService
 {
-    public function generate()
+    private $product;
+
+    public function generate($product = null)
     {
+        $this->product = $product ?? 'firstdown';
+
         $basicManifest =  [
-            'name' => config('laravelpwa.manifest.name'),
-            'short_name' => config('laravelpwa.manifest.short_name'),
-            'start_url' => asset(config('laravelpwa.manifest.start_url')),
+            'id' => config('laravelpwa.manifest.start_url'),
+            'name' => $this->product == 'firstdown' ? 'Firstdown Playbook' : 'Fastbreak',
+            'short_name' => $this->product,
+            'start_url' => config('laravelpwa.manifest.start_url'),
             'display' => config('laravelpwa.manifest.display'),
             'theme_color' => config('laravelpwa.manifest.theme_color'),
             'background_color' => config('laravelpwa.manifest.background_color'),
@@ -28,9 +33,9 @@ class ManifestService
         foreach (config('laravelpwa.manifest.icons') as $size => $file) {
             $fileInfo = pathinfo($file['path']);
             $basicManifest['icons'][] = [
-                'src' => $file['path'],
+                'src' => asset('pwa/' . $this->product . $file['path']),
                 'type' => 'image/' . $fileInfo['extension'],
-                'sizes' => (isset($file['sizes']))?$file['sizes']:$size,
+                'sizes' => $size,
                 'purpose' => $file['purpose']
             ];
         }
@@ -45,9 +50,6 @@ class ManifestService
                         'type' => 'image/' . $fileInfo['extension'],
                         'purpose' => $shortcut['icons']['purpose']
                     ];
-                    if(isset($shortcut['icons']['sizes'])) {
-                        $icon["sizes"] = $shortcut['icons']['sizes'];
-                    }
                 } else {
                     $icon = [];
                 }
@@ -66,6 +68,7 @@ class ManifestService
         foreach (config('laravelpwa.manifest.custom') as $tag => $value) {
              $basicManifest[$tag] = $value;
         }
+        
         return $basicManifest;
     }
 
