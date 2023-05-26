@@ -11,16 +11,12 @@ namespace LaravelPWA\Services;
 
 class ManifestService
 {
-    private $product;
-
     public function generate($product = null)
     {
-        $this->product = $product ?? 'firstdown';
-
         $basicManifest =  [
             'id' => config('laravelpwa.manifest.start_url'),
-            'name' => $this->product == 'firstdown' ? 'Firstdown Playbook' : 'Fastbreak',
-            'short_name' => $this->product,
+            'name' => $product == 'firstdown' ? 'Firstdown Playbook' : 'Fastbreak',
+            'short_name' => $product,
             'start_url' => config('laravelpwa.manifest.start_url'),
             'display' => config('laravelpwa.manifest.display'),
             'theme_color' => config('laravelpwa.manifest.theme_color'),
@@ -33,7 +29,7 @@ class ManifestService
         foreach (config('laravelpwa.manifest.icons') as $size => $file) {
             $fileInfo = pathinfo($file['path']);
             $basicManifest['icons'][] = [
-                'src' => asset('pwa/' . $this->product . $file['path']),
+                'src' => asset('pwa/' . $product . $file['path']),
                 'type' => 'image/' . $fileInfo['extension'],
                 'sizes' => $size,
                 'purpose' => $file['purpose']
